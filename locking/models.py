@@ -239,6 +239,18 @@ class NonBlockingLock(models.Model):
         except IntegrityError:
             raise RenewalError()
 
+    def extend(self, seconds):
+        if self.is_expired():
+            raise Expired()
+
+        self.renewed_on = timezone.now()
+        self.expires_on += timedelta(seconds=seconds)
+
+        try:
+            self.save()
+        except IntegrityError:
+            raise RenewalError()
+
     @property
     def is_expired(self):
         '''
@@ -260,7 +272,3 @@ def lock_pre_save(sender, instance, raw, **kwargs):
         if instance.created_on is None:
             instance.created_on = now
 
-        if instance.renewed_on is None:
-            instance.renewed_on = now
-
-        instance.expires_on = instance.renewed_on + timedelta(seconds=instance.max_age)
