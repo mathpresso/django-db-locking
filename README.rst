@@ -6,6 +6,12 @@ Django-locking
 .. image:: https://travis-ci.org/vikingco/django-db-locking.svg?branch=master
     :target: https://travis-ci.org/vikingco/django-db-locking
 
+Change note
+-----------
+This repository is forked from here_. The model **NonBlockingLock** is changed to ``abstract = True``.
+
+.. _here: https://github.com/vikingco/django-db-locking
+
 Usage
 -----
 The simplest use is by using it as a context manager:

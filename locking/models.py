@@ -175,7 +175,7 @@ class NonBlockingLock(models.Model):
     )
     #: The creation time of the lock
     created_on = models.DateTimeField(
-        verbose_name=_('created on'), db_index=True
+        verbose_name=_('created on'), db_index=True, auto_now_add=True
     )
     #: The renewal time of the lock
     renewed_on = models.DateTimeField(
@@ -263,13 +263,4 @@ class NonBlockingLock(models.Model):
             return False
         else:
             return self.expires_on < timezone.now()
-
-
-@receiver(pre_save, sender=NonBlockingLock)
-def lock_pre_save(sender, instance, raw, **kwargs):
-    if not raw:
-        now = timezone.now()
-
-        if instance.created_on is None:
-            instance.created_on = now
 
