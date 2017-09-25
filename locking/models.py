@@ -241,7 +241,7 @@ class NonBlockingLock(models.Model):
             raise RenewalError()
 
     def extend(self, seconds):
-        if self.is_expired():
+        if self.is_expired:
             raise Expired()
 
         self.renewed_on = timezone.now()
