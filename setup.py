@@ -1,7 +1,10 @@
 from setuptools import setup, find_packages
 try: # for pip >= 10
     from pip._internal.req.req_file import parse_requirements
-    from pip._internal.download import PipSession
+    try: # for pip >= 20.0.2
+        from pip._internal.network.session import PipSession
+    except:
+        from pip._internal.download import PipSession
 except ImportError: # for pip <= 9.0.3
     from pip.req import parse_requirements
     from pip.download import PipSession
@@ -19,15 +22,15 @@ dependency_links = []
 # Inject requirements from requirements.txt into setup.py
 requirements_file = parse_requirements(path.join('requirements', 'requirements.txt'), session=PipSession())
 for req in requirements_file:
-    install_requires.append(str(req.req))
-    if req.link:
+    install_requires.append(str(getattr(req, 'req', getattr(req, 'requirement', None))))
+    if hasattr(req, 'link') and req.link:
         dependency_links.append(str(req.link))
 
 # Inject test requirements from requirements_test.txt into setup.py
 requirements_test_file = parse_requirements(path.join('requirements', 'requirements_test.txt'), session=PipSession())
 for req in requirements_test_file:
-    tests_require.append(str(req.req))
-    if req.link:
+    tests_require.append(str(getattr(req, 'req', getattr(req, 'requirement', None))))
+    if hasattr(req, 'link') and req.link:
         dependency_links.append(str(req.link))
 
 
